@@ -1,15 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
-contract MetaMarket {
-  address public owner;
-  uint public itemSku;
-  enum State { ForSale, Sold, Cancelled }
-  mapping(uint => Item) public items;
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-  struct Item {
-    string name;
-    uint sku;
+// contract MetaMarket is Ownable, IERC721Receiver {
+contract MetaMarket is IERC721Receiver {
+  address public owner;
+  uint public totalListings;
+  enum State { ForSale, Sold, Cancelled }
+  mapping(uint => Listing) public listings;
+
+  struct Listing {
+    uint listingId;
+    address tokenContractAddress;
     uint price;
     State state;
     address payable seller;
@@ -41,44 +45,49 @@ contract MetaMarket {
   }
 
   modifier ensureSeller(uint listingId) {
-    //require (items[listingId].seller == msg.sender)
+    //require (listings[listingId].seller == msg.sender)
     _;
   }
 
   modifier paidEnough(uint listingId) {
-    //require (msg.value >= items[listingId].price)
+    //require (msg.value >= listings[listingId].price)
     _;
   }
 
   modifier returnExcess(uint listingId) {
     _;
-    // uint _price = items[listingId].price;
+    // uint _price = listings[listingId].price;
     // uint amountToRefund = msg.value - _price;
-    // items[listingId].buyer.transfer(amountToRefund);
+    // listings[listingId].buyer.transfer(amountToRefund);
   }
 
   constructor() {
     owner = msg.sender;
-    itemSku = 0;
+    totalListings = 0;
   }
 
-
   // Allow a seller to list an NFT for sale on the platform
-  // 1. Ensures the NFT address is of a specific token type
-  // 2. Persist: 
-  // - seller address
-  // - NFT item details: token address, name, any other required data
-  // - sale price
-  // 3. Emit an event
-  // 4. Return the listingId;
-
-  function listItem(address tokenAddress, string memory name, uint price) 
+  function createListing(address tokenAddress, uint tokenId, uint price) 
     public 
     validToken(tokenAddress) 
     ensureTokenOwnership(tokenAddress)
     returns(uint)
   {
+    totalListings += 1; //Newly updated total count acts as unique ID for new listing
+    listings[totalListings] = Listing({
+      listingId: totalListings,
+      tokenContractAddress: tokenAddress,
+      price: price,
+      state: State.ForSale,
+      seller: payable(msg.sender),
+      buyer: payable(address(0))
+    });
 
+    //Transfer the NFT to the MetaMarket contract address.
+    ERC721(tokenAddress).safeTransferFrom(msg.sender, address(this), tokenId);
+
+    emit LogNewListing(totalListings);
+    return totalListings; 
   }
 
   // Allow a seller to remove the listing
@@ -126,4 +135,15 @@ contract MetaMarket {
   {
 
   } 
+
+  function onERC721Received(
+    /* solhint-disable */
+      address operator,
+      address from,
+      uint256 tokenId,
+      bytes calldata data
+    /* solhint-enable */
+    ) external pure override returns (bytes4) {
+      return bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"));
+  }
 }
