@@ -1,59 +1,75 @@
-// SPDX-License-Identifier: MIT
-pragma solidity >=0.4.22 <0.9.0;
+/// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
-// contract MetaMarket is Ownable, IERC721Receiver {
+/// @title A smart contract to enable buying and selling of ERC721 tokens
+/// @author @kevsherman
+/// @notice Still a WIP, demo purposes only
 contract MetaMarket is IERC721Receiver {
+  
+  /// Owner set when contract deployed
   address public owner;
+  
+  /// Count of the total listings created
   uint public totalListings;
+
+  /// The state of the Listing
   enum State { ForSale, Sold, Cancelled }
+
+  /// Mapping from listingId to Listing
   mapping(uint => Listing) public listings;
 
+  /// Struct of the Listing object, to store who is selling/buying what 
   struct Listing {
     uint listingId;
     address tokenContractAddress;
+    uint tokenContractId;
     uint price;
     State state;
     address payable seller;
     address payable buyer;
   }
 
-  
   /* 
    * Events
    */
 
+  /// @notice Event to be emitted when a new Listing has been created
+  /// @return the listing id for the created Listing
   event LogNewListing(uint listingId);
+
+  /// @notice Event to be emitted when a Listing has been updated
+  /// @return the listing id for the updated Listing
   event LogUpdatedListing(uint listingId);
+
+  /// @notice Event to be emitted when a Listing has been removed
+  /// @return the listing id for the removed Listing
   event LogRemovedListing(uint listingId);
+
+  /// @notice Event emitted when a Listing has been updated
+  /// @return the listing id for the updated Listing
   event LogSoldListing(uint listingId);
 
   /* 
    * Modifiers
    */
 
-  modifier validToken(address tokenAddress) {
-    //require(token at tokenAddress.included in acceptable token types) 
-    _;
-  }
-
-  modifier ensureTokenOwnership(address tokenAddress) {
-    //require( token actually belongs to seller)
-    _;
-  }
-
+  /// @notice Modifier to ensure that the msg.sender is the seller 
   modifier ensureSeller(uint listingId) {
-    //require (listings[listingId].seller == msg.sender)
+    require (listings[listingId].seller == msg.sender);
     _;
   }
 
+  /// @notice Modifier to ensure that the buyer has supplied enough ETH for the transaction
+  /// @dev Purchasing functionality not yet built
   modifier paidEnough(uint listingId) {
     //require (msg.value >= listings[listingId].price)
     _;
   }
 
+  /// @notice Modifier to be called after a purchase transaction to return excess funds
+  /// @dev Purchasing functionality not yet built
   modifier returnExcess(uint listingId) {
     _;
     // uint _price = listings[listingId].price;
@@ -61,22 +77,23 @@ contract MetaMarket is IERC721Receiver {
     // listings[listingId].buyer.transfer(amountToRefund);
   }
 
+  /// @notice Initializes the contract by setting the owner and the totalListings variable.
   constructor() {
     owner = msg.sender;
     totalListings = 0;
   }
 
-  // Allow a seller to list an NFT for sale on the platform
+  /// @notice Allow a seller to list an NFT for sale, transfer the token to the MetaMarket address
+  /// @dev The safeTransferFrom() handles ensuring ownership and approvals, so they aren't included as modifiers.
   function createListing(address tokenAddress, uint tokenId, uint price) 
     public 
-    validToken(tokenAddress) 
-    ensureTokenOwnership(tokenAddress)
     returns(uint)
   {
     totalListings += 1; //Newly updated total count acts as unique ID for new listing
     listings[totalListings] = Listing({
       listingId: totalListings,
       tokenContractAddress: tokenAddress,
+      tokenContractId: tokenId,
       price: price,
       state: State.ForSale,
       seller: payable(msg.sender),
@@ -90,12 +107,12 @@ contract MetaMarket is IERC721Receiver {
     return totalListings; 
   }
 
-  // Allow a seller to remove the listing
-  // 1. validate it is the seller attempting to remove the listing
-  // 2. mark the item as 'cancelled'
-  // 3. emit an event
-  // 4. Return a bool for success/failure
-
+  /// @notice Allow a seller to remove the listing and get the token back from the MetaMarket address
+  /// @dev To Do:
+  ///      1. validate that msg.sender is the seller
+  ///      2. mark the item as 'cancelled'
+  ///      3. emit a LogRemovedListing event
+  ///      4. Return a bool for success/failure
   function removeListing(uint listingId) 
     public
     ensureSeller(listingId)
@@ -104,11 +121,12 @@ contract MetaMarket is IERC721Receiver {
 
   }
 
-  // Allow a seller to update the listing price
-  // 1. validate its the seller attempting to update the listing
-  // 2. update the listing
-  // 3. emit an event
-  // 4. Return a bool for success/failure
+  /// @notice Allow a seller to update the listing price
+  /// @dev To Do:
+  ///      1. validate it is the seller attempting to update the listing
+  ///      2. validate that msg.sender is the seller
+  ///      3. emit a LogUpdatedListing event
+  ///      4. Return a bool for success/failure
   function updatePrice(uint listingId)
     public
     ensureSeller(listingId)
@@ -118,14 +136,14 @@ contract MetaMarket is IERC721Receiver {
   }
 
 
-  // Allow a buyer to purchase the listing for the asking price
-  // 1. validate the transaction has sufficient eth
-  // 2. transfer eth to seller
-  // 3. transfer nft to buyer
-  // 4. mark listing as Sold
-  // 5. return any excess funds to buyer
-  // 5. return a bool for success/failure
-
+  /// @notice Allow a buyer to update the listing price
+  /// @dev To Do: 
+  ///        1. validate the transaction has sufficient eth
+  ///        2. transfer eth to seller
+  ///        3. transfer nft to buyer
+  ///        4. mark listing as Sold
+  ///        5. return any excess funds to buyer
+  ///        6. return a bool for success/failure
   function purchaseListing(uint listingId) 
     public 
     payable
@@ -136,6 +154,8 @@ contract MetaMarket is IERC721Receiver {
 
   } 
 
+  /// @notice Override function to allow for recieving ERC721 tokens
+  /// @dev Figure out how to remove warning re: unused variables
   function onERC721Received(
     /* solhint-disable */
       address operator,

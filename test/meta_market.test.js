@@ -1,7 +1,5 @@
 let MetaMarket = artifacts.require("MetaMarket");
 let NFT = artifacts.require("WorldSwapToken");
-// let ERC721 = artifacts.require("../node_modules/@openzeppelin/contracts/token/ERC721/ERC721");
-// import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract("MetaMarket", function(accounts){
 
