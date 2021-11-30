@@ -19,30 +19,18 @@ The project is designed as a Smart Contract which acts as an escrow agent betwee
 7) The MetaMarket contract will transfer the sale price to the seller and the token to the buyer.
 8) A percentage transaction fee will be collected and kept in the MetaMarket contract
 
-## Directory Structure
-|_build/contracts
-    - MetaMarket.json
-    - Migrations.json
-    - WorldSwapToken.json
-|_contracts
-    - MetaMarket.sol
-    - Migrations.sol
-    - WorldSwapToken.sol
-|_migrations
-    - 1_initial_migration.js
-    - 2_migrate_metamarket.js  // This migration deploys both MetaMarket and WorldSwapToken
-|_test
-    - meta_market.test.js
 
-
-### Explanation
+## Explanation
 The main project is built around the `MetaMarket.sol` contract, which can currently `createListing()` and receive ERC721 tokens.
 The `WorldSwapToken.sol` contract was built as a test token, to allow devs to create a ERC721 token, issue it to an address and list it in the MetaMarket contract.
 
 The frontend is a rails project, with jquery and vanilla javascript and web3.js.  
 It can be found at: https://metamarketfrontend.herokuapp.com/
 
-## Instructions
+### Directory Structure
+!['directory_structure'](./directory_structure.png)
+
+## Testing Instructions
 
 1) Navigate to https://metamarketfrontend.herokuapp.com/
 2) Use the `Connect to Metamask` button to connect your wallet
@@ -57,16 +45,7 @@ It can be found at: https://metamarketfrontend.herokuapp.com/
 10) When the listing is succesfully created, you will be redirect to the `My Listings` page. This is populated by pulling a list of all tokens held by the MetaMarket contract where the seller is listed as the current MetaMask account.
 11) Navigate to the [Ropsten Etherscan page](https://ropsten.etherscan.io/address/0x28842b54dFB29bDCe18a334130c441924D66b248) for the contract to confirm the transaction was successful and that the $SWAP tokens are now held by the contract.
 
+---
+
 ETH address for certificate: 0x???
 
-
-Initial goal:
- - DONE - allow users to connect their ETH wallet (metamask)
- - DONE - allow users to list an NFT from an approved list of metaverse projects
- - WIP - allow users to buy listed NFTs via smart contract
-
- Next steps:
- - pull available assets from across the metaverse to list
- - offer a fiat bridge to allow purchase via credit card
- - allow users to add their assets to a DAO, which will act as rental pool
-   - gamers will be able to lease the assets from the DAO for a fee, revenue shared back to participants of the DAO
