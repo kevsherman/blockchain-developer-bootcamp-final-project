@@ -1,0 +1,3 @@
+Testnet: ropsten
+MetaMarket address: 0x28842b54dFB29bDCe18a334130c441924D66b248
+WorldSwapToken address: 0x3F9210215ae6A886e6aB5d8AF8e2D91Fa4844392
