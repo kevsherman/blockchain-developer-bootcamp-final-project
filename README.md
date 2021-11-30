@@ -24,11 +24,14 @@ The project is designed as a Smart Contract which acts as an escrow agent betwee
 The main project is built around the `MetaMarket.sol` contract, which can currently `createListing()` and receive ERC721 tokens.
 The `WorldSwapToken.sol` contract was built as a test token, to allow devs to create a ERC721 token, issue it to an address and list it in the MetaMarket contract.
 
-The frontend is a rails project, with jquery and vanilla javascript and web3.js.  
-It can be found at: https://metamarketfrontend.herokuapp.com/
+The front-end is a rails project, with jquery and vanilla javascript and web3.js.  
+
+The front-end repo can be found at: https://github.com/kevsherman/worldswapdemo
+The live front-end demo can be found at: https://metamarketfrontend.herokuapp.com/
 
 ### Directory Structure
-!['directory_structure'](./directory_structure.png)
+
+![directory_structure](./directory_structure.png)
 
 ## Testing Instructions
 
@@ -44,6 +47,14 @@ It can be found at: https://metamarketfrontend.herokuapp.com/
   -> Note working on a solution to improve this workflow
 10) When the listing is succesfully created, you will be redirect to the `My Listings` page. This is populated by pulling a list of all tokens held by the MetaMarket contract where the seller is listed as the current MetaMask account.
 11) Navigate to the [Ropsten Etherscan page](https://ropsten.etherscan.io/address/0x28842b54dFB29bDCe18a334130c441924D66b248) for the contract to confirm the transaction was successful and that the $SWAP tokens are now held by the contract.
+
+---
+# Tests
+In order to run the tests
+- clone the repo
+- run ganache on port 7545
+- run `truffle test`
+- See that sweet, sweet green
 
 ---
 
