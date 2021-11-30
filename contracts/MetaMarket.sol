@@ -55,6 +55,12 @@ contract MetaMarket is IERC721Receiver {
    * Modifiers
    */
 
+  /// @notice Modifer to ensure that only the contract owner can execute a function
+  modifier onlyOwner() {
+    require(msg.sender == owner, "Not authorized.");
+      _;
+  }
+
   /// @notice Modifier to ensure that the msg.sender is the seller 
   modifier ensureSeller(uint listingId) {
     require (listings[listingId].seller == msg.sender);
@@ -89,6 +95,8 @@ contract MetaMarket is IERC721Receiver {
     public 
     returns(uint)
   {
+    require(price < type(uint256).max); //Protect against overflow attacks
+
     totalListings += 1; //Newly updated total count acts as unique ID for new listing
     listings[totalListings] = Listing({
       listingId: totalListings,
@@ -153,6 +161,17 @@ contract MetaMarket is IERC721Receiver {
   {
 
   } 
+
+  /// @notice Allow the contract owner to withdraw accrued fees
+  /// @dev To Do: No fees currently collected to withdraw
+  function withdrawFees(uint amount)
+    public
+    payable
+    onlyOwner
+    returns(bool)  
+  {
+
+  }
 
   /// @notice Override function to allow for recieving ERC721 tokens
   /// @dev Figure out how to remove warning re: unused variables

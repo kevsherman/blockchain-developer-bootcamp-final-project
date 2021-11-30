@@ -73,6 +73,27 @@ contract("MetaMarket", function(accounts){
       );
     });
 
+    it("should set the listing's tokenContractAddress to the address that was supplied", async () => {
+      var correcttokenContractAddress = false;
+      var price = 30;
+      await nftContract.awardToken(alice, 1, {from: owner});
+      //approve MetaMarket as a transfer agent for the NFT
+      await nftContract.approve(instance.address, 1, {from: alice});
+      await instance.createListing(nftContract.address, 1, price, {from: alice});
+      
+      const result = await instance.listings.call(1)
+
+      if(result.tokenContractAddress == nftContract.address){
+        correcttokenContractAddress = true;
+      } 
+
+      assert.equal(
+        correcttokenContractAddress,
+        true,
+        "calling createListing() should set the listing's tokenContractAddress to the address supplied",
+      );
+    });
+
     it("should transfer the NFT to the MetaMarket contract", async () => {
       var correctAddress = false;
 
