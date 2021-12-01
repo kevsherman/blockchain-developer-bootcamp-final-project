@@ -26,8 +26,9 @@ The `WorldSwapToken.sol` contract was built as a test token, to allow devs to cr
 
 The front-end is a rails project, with jquery and vanilla javascript and web3.js.  
 
-The front-end repo can be found at: https://github.com/kevsherman/worldswapdemo
-The live front-end demo can be found at: https://metamarketfrontend.herokuapp.com/
+View the [front-end repo](https://github.com/kevsherman/worldswapdemo)
+
+View the [live front-end demo](https://metamarketfrontend.herokuapp.com/)
 
 ### Directory Structure
 
@@ -35,8 +36,11 @@ The live front-end demo can be found at: https://metamarketfrontend.herokuapp.co
 
 ## Testing Instructions
 
+[View the Demo Here](https://www.youtube.com/watch?v=XZ60CWTdNoM)
+
 1) Navigate to https://metamarketfrontend.herokuapp.com/
 2) Use the `Connect to Metamask` button to connect your wallet
+  - Ensure you're connected to the **Ropsten Test Network** with some test ETH
 3) Mint yourself a new `$SWAP` token or two for testing
 4) Click the `Sell` button to go the `New Listing` page
 5) You should see a list of all tokens available to sell, with the unique `tokenId` listed on the righthand side
