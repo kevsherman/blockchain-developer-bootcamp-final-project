@@ -62,5 +62,5 @@ In order to run the tests
 
 ---
 
-ETH address for certificate: 0x???
+ETH address for certificate: 0x579CDD06B2AFE4e17229e894688a0Bb8A0502A3A
 
